@@ -1,0 +1,39 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_arith.all;
+use ieee.std_logic_unsigned.all;
+
+entity SM32_6 is
+    Port (X: in std_logic; 
+    CLK : in std_logic; 
+    Z : out std_logic);
+end SM32_6;
+
+architecture ROM of SM32_6 is
+type ROM32X4 is array (0 to 39) of std_logic_vector (0 to 3);
+constant SROM:ROM32X4:=("0001", "0110", "0000", "1000", "1001", "1010", "1011", "1100",
+                        "1101", "1110", "1111", "0000", "0001", "0010", "0011", "0100",
+                        "0101", "0110", "0111", "1000", "1001", "1110", "1111", "1010",
+                        "1100", "1101", "1110", "0010", "0110", "0101", "0111", "1000");
+
+signal Q, Qplus: std_logic_vector (1 to 3):= "000";
+signal Index, Romout: std_logic_vector (0 to 3);
+
+begin
+Index <= X&Q;           --X&Q is 4-bit vector: X Q1 Q2 Q3
+Romout <= SROM (conv_integer(Index));
+                        --reads output from the ROM
+                        --conv_integer converts Index to Integer
+Z <= Romout (0);
+Qplus <= Romout (1 to 3);
+
+process(CLK)
+    begin
+        if CLK'event and CLK = '1' then Q <= Qplus;
+        end if;
+    end process;
+end ROM;
+
+
+
+  

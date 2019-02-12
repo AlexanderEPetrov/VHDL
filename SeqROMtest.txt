@@ -1,0 +1,37 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity SM16_6 is
+    Port (X : in std_logic;
+    CLK : in std_logic;
+    Z : out std_logic);
+end SM16_6;
+
+architecture ROM of SM16_6 is
+type ROM16X4 is array (0 to 15) of std_logic_vector (0 to 3);
+constant ROM1: ROM16X4 := ("1001", "1011", "0100", "0101",
+           "1101", "0000", "1000", "0000",
+           "0010", "0100", "1100", "1101",
+           "0110", "1000", "0000", "0000");
+
+signal Q, D: std_logic_vector (1 to 3):= "000";
+signal Index, Romout: std_logic_vector (0 to 3);
+
+begin
+Index <= X&Q;    -- X&Q is a 4-bit vector: X Q1 Q2 Q3
+Romout <= ROM1 (conv_integer(Index));
+
+         -- this statement reads the output from the ROM
+         -- conv_integer converts Index to an Integer
+
+Z <= Romout(0);
+D <= Romout(1 to 3);
+
+process (CLK)
+   begin
+    if CLK'event and CLK = '1' then Q <= D; 
+    end if;
+   end process;
+end ROM;
